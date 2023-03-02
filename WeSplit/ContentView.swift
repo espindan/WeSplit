@@ -13,7 +13,7 @@ struct ContentView: View {
     @State private var numberOfPeople = 2
     @State private var tipPercentage = 20
     @FocusState private var amountIsFocused: Bool
-    //let tipPercentages = [10, 15, 20, 25, 0]
+    let tipPercentages = [10, 15, 20, 25, 0, 20]
     let currency = FloatingPointFormatStyle<Double>.Currency(code: Locale.current.currencyCode ?? "USD")
     
     var totalPerPerson: Double {
@@ -35,7 +35,6 @@ struct ContentView: View {
                     TextField("Amount", value: $checkAmount, format: currency)
                         .keyboardType(.decimalPad)//numberPad
                         .focused($amountIsFocused)
-                        
                     
                     Picker("Number of people", selection: $numberOfPeople){
                         ForEach(2..<100){
@@ -45,15 +44,20 @@ struct ContentView: View {
                 }
                 Section{
                     Picker("Tip percentage", selection: $tipPercentage){
-                        ForEach(0..<101){
+                        ForEach(tipPercentages,id: \.self){
                             Text($0,format: .percent)
                         }
-                    }
+                    }.pickerStyle(.segmented)
                 } header: {
                     Text("How much tip do you want to leave?")
                 }
                 Section{
-                    Text(grandTotal,format: currency)
+                    if Double(tipPercentage) == 0{
+                        Text(grandTotal,format: currency)
+                            .foregroundColor(.red)
+                    }else{
+                        Text(grandTotal,format: currency)
+                    }
                 } header: {
                     Text("Total amount for the check")
                 }
